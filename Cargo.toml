@@ -1,0 +1,21 @@
+[package]
+name = "config-sever"
+version = "0.1.0"
+authors = ["ValeriiRoman <valeriy.roman@dstarlab.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "3"
+env_logger = "0.8.3"
+log = "0.4"
+config = "0.11.0"
+# glob = "0.3"
+
+serde_derive = "^1.0.8"
+serde = "^1.0.8"
+
+serde_yaml = "0.8.17"
+
+sha1 = "0.6.0"
