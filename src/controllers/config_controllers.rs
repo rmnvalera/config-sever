@@ -1,10 +1,7 @@
-use std::{collections::hash_map::DefaultHasher, fmt::Debug};
 use std::hash::{Hash, Hasher};
+use std::{collections::hash_map::DefaultHasher, fmt::Debug, fs::File};
 
-extern crate sha1;
-
-use actix_web::{get, web, HttpResponse};
-use config::{Config, File};
+use actix_web::{get, http::StatusCode, web, HttpResponse};
 use serde_yaml::Value;
 
 #[derive(Deserialize, Debug)]
@@ -13,21 +10,25 @@ struct GetConfigParams {
     client_id: Option<String>,
 }
 
+struct ResponseOfMessageError {
+    ststus: StatusCode,
+    message: Option<String>,
+}
+
 #[get("/applications/{application}/environments/{environment}/configurations/{configuration}")]
 async fn get_config(
     web::Path((application, environment, configuration)): web::Path<(String, String, String)>,
     _params: web::Query<GetConfigParams>,
 ) -> HttpResponse {
-
     let config_path = format!(
         "resurce/{}/{}/{}.yml",
         application, environment, configuration
     );
 
-    let config = match read_config_file(&config_path){
+    let config = match read_config_file(&config_path) {
         Ok(value) => value,
         Err(e) => {
-            return HttpResponse::InternalServerError().body(e);
+            return HttpResponse::Ok().status(e.ststus).body(e.message.unwrap());
         }
     };
 
@@ -40,8 +41,11 @@ async fn get_config(
         }
     };
 
-    log::info!("Hash config: {}", calculate_hash(&string_config));
-    HttpResponse::Ok().header("Configuration-Version", "v1").body(string_config)
+    let version_hash = calculate_hash(&string_config);
+    log::info!("Hash config: {}", version_hash);
+    HttpResponse::Ok()
+        .header("Configuration-Version", version_hash)
+        .body(string_config)
 }
 
 #[get("/ping")]
@@ -49,20 +53,25 @@ async fn ping() -> HttpResponse {
     HttpResponse::Ok().body("pong - AppConfig service")
 }
 
-fn read_config_file(config_path: &str) -> Result<Value, String>{
-    let mut settings = Config::default();
-    let config_file = File::from(std::path::Path::new(&config_path));
-
-    if let Err(e) = settings.merge(config_file) {
-        log::info!("{}", e);
-        return Err("ConfigError!".to_string());
+fn read_config_file(config_path: &str) -> Result<Value, ResponseOfMessageError> {
+    let file = match File::open(config_path) {
+        Ok(file) => file,
+        Err(_) => {
+            return Err(ResponseOfMessageError {
+                ststus: StatusCode::NOT_FOUND,
+                message: Some(String::from("Config not found!!")),
+            });
+        }
     };
 
-    let configs_value = match settings.try_into::<Value>() {
+    let configs_value = match serde_yaml::from_reader(&file) {
         Ok(value) => value,
         Err(e) => {
             log::info!("{}", e);
-            return Err("Error parse Yaml!!".to_string());
+            return Err(ResponseOfMessageError {
+                ststus: StatusCode::INTERNAL_SERVER_ERROR,
+                message: Some(String::from("Error parse Yaml!!")),
+            });
         }
     };
 

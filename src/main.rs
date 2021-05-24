@@ -1,26 +1,16 @@
-extern crate config;
-
 #[macro_use]
 extern crate serde_derive;
 
 mod mods;
 
-
-
-use actix_web::{App, HttpServer, middleware};
+use actix_web::{middleware, App, HttpServer};
 use env_logger::Env;
 use mods::{config_controllers, settings::Settings};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
-    // env::set_var("RUST_BACKTRACE", "1");
-
-    let config = Settings::new().unwrap();
-    log::info!("config: {:?}", config);
-
-    env_logger::Builder::from_env(Env::default().default_filter_or(config.log.get_level()))
-        .init();
+    let config = Settings::new();
+    env_logger::Builder::from_env(Env::default().default_filter_or(config.log.get_level())).init();
 
     HttpServer::new(|| {
         App::new()
