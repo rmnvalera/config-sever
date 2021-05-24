@@ -1,0 +1,52 @@
+---
+# # for test
+experiments: {}
+
+# # for test
+preRegistrationExperiments: {}
+
+# Track impact of unsealed sender rate limits
+limits:
+  unsealedSenderNumber:
+    maxCardinality: 100
+    ttl: "PT24H" # 86400.000000000
+    ttlJitter: "PT24H"
+  unsealedSenderIp:
+    bucketSize: 120
+    leakRatePerMinute: 0.03333333333333333
+
+# The remote deprecation filter rejects traffic from clients older than a configured minimum version. 
+# It may optionally also reject traffic from clients with unrecognized User-Agent strings. 
+# If a client platform does not have a configured minimum version, all traffic from that client platform is allowed.
+remoteDeprecation:
+  minimumVersions: {}
+  versionsPendingDeprecation: {}
+  blockedVersions: {}
+  versionsPendingBlock: {}
+  unrecognizedUserAgentAllowed: true
+
+# Only apply unsealed sender rate limits .
+messageRate:
+  enforceUnsealedSenderRateLimit: false
+  rateLimitedCountryCodes: []
+  rateLimitedHosts: []
+  responseDelay: 0.001200000          # PT0.0012S
+  responseDelayJitter: 0.000500000    # PT0.0005S
+  receiptDelay: 1.200000000           # PT1.2S
+  receiptDelayJitter: 0.800000000     # PT0.8S
+  receiptProbability: 0.82
+
+# Dynamically-configured list of allowed country codes for payments.
+payments:
+  allowedCountryCodes: []
+
+# Feature flag system on the dynamic config system.
+featureFlags: []
+
+# Migrate Twilio numbers from static to dynamic configuration
+twilio:
+  numbers: []
+
+# Dynamic configuration for signup captcha by country code
+signupCaptcha:
+  countryCodes: []
