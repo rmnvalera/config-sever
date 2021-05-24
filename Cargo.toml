@@ -1,5 +1,5 @@
 [package]
-name = "config-sever"
+name = "dSTAR-AppConfig"
 version = "0.1.0"
 authors = ["dSTARlab, ValeriiRoman <valeriy.roman@dstarlab.com>"]
 edition = "2018"

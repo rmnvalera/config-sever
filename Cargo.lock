@@ -427,19 +427,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "config-sever"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "env_logger",
- "log",
- "serde",
- "serde_derive",
- "serde_yaml",
- "toml",
-]
-
-[[package]]
 name = "const_fn"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -484,6 +471,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81156fece84ab6a9f2afdb109ce3ae577e42b1228441eded99bd77f627953b1a"
 dependencies = [
  "cfg-if 1.0.0",
+]
+
+[[package]]
+name = "dSTAR-AppConfig"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "env_logger",
+ "log",
+ "serde",
+ "serde_derive",
+ "serde_yaml",
+ "toml",
 ]
 
 [[package]]
