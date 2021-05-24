@@ -5,7 +5,7 @@ mod mods;
 
 use actix_web::{middleware, App, HttpServer};
 use env_logger::Env;
-use mods::{config_controllers, settings::Settings};
+use mods::{config_controllers, ping_controllers, settings::Settings};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .service(config_controllers::get_config)
-            .service(config_controllers::ping)
+            .service(ping_controllers::ping)
     })
     .bind(config.server.get_addr())?
     .run()

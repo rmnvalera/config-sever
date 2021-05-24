@@ -1,8 +1,9 @@
-use std::hash::{Hash, Hasher};
-use std::{collections::hash_map::DefaultHasher, fmt::Debug, fs::File};
+use std::{fmt::Debug, fs::File};
 
 use actix_web::{get, http::StatusCode, web, HttpResponse};
 use serde_yaml::Value;
+
+use crate::mods::utils;
 
 #[derive(Deserialize, Debug)]
 struct GetConfigParams {
@@ -41,16 +42,11 @@ async fn get_config(
         }
     };
 
-    let version_hash = calculate_hash(&string_config);
+    let version_hash = utils::calculate_hash(&string_config);
     log::info!("Hash config: {}", version_hash);
     HttpResponse::Ok()
         .header("Configuration-Version", version_hash)
         .body(string_config)
-}
-
-#[get("/ping")]
-async fn ping() -> HttpResponse {
-    HttpResponse::Ok().body("pong - AppConfig service")
 }
 
 fn read_config_file(config_path: &str) -> Result<Value, ResponseOfMessageError> {
@@ -76,10 +72,4 @@ fn read_config_file(config_path: &str) -> Result<Value, ResponseOfMessageError> 
     };
 
     Ok(configs_value)
-}
-
-fn calculate_hash<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
 }
