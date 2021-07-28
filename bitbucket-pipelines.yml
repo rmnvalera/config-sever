@@ -1,0 +1,12 @@
+image: rustlang/rust:nightly
+pipelines:
+  branches:
+    master:
+      - step:
+          services:
+          - docker
+          script: 
+          - export IMAGE_NAME=dstarlab/logic:app_conf_$BITBUCKET_COMMIT
+          - docker build -t $IMAGE_NAME .
+          - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
+          - docker push $IMAGE_NAME
